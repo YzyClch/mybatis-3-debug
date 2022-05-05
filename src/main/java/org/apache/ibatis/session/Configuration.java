@@ -697,6 +697,7 @@ public class Configuration {
   }
 
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    //如果没有传入executor类型，使用默认 SIMPLE executor
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
@@ -707,9 +708,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
-    if (cacheEnabled) {
+    if (cacheEnabled) { //校验是否开启二级缓存
+      // 包装一层 executor，这应该是装饰器设计模式把？ CachingExecutor带有二级缓存的功能
       executor = new CachingExecutor(executor);
     }
+    // 允许插件对执行器做修改，会调用所有插件的拦截方法
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

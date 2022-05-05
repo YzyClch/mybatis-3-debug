@@ -60,7 +60,7 @@ public abstract class BaseExecutor implements Executor {
   protected Configuration configuration;
 
   protected int queryStack;
-  private boolean closed;
+  private boolean closed; //标识Executor是否关闭？
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
     this.transaction = transaction;

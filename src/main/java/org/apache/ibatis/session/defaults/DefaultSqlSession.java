@@ -283,8 +283,16 @@ public class DefaultSqlSession implements SqlSession {
     return configuration;
   }
 
+
+  /**
+   *
+   * @param type Mapper interface class
+   * @param <T>
+   * @return
+   */
   @Override
   public <T> T getMapper(Class<T> type) {
+    // 调用 configuration::getMapper 创建代理
     return configuration.getMapper(type, this);
   }
 

@@ -39,6 +39,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 用来描述一个mapper方法
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -54,6 +56,12 @@ public class MapperMethod {
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /**
+   * Mapper方法最终会调用这个方法，代理调用sqlSession来执行
+   * @param sqlSession
+   * @param args
+   * @return
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
@@ -128,6 +136,7 @@ public class MapperMethod {
           + " needs either a @ResultMap annotation, a @ResultType annotation,"
           + " or a resultType attribute in XML so a ResultHandler can be used as a parameter.");
     }
+    // 调用 ParamNameResolver 解析param
     Object param = method.convertArgsToSqlCommandParam(args);
     if (method.hasRowBounds()) {
       RowBounds rowBounds = method.extractRowBounds(args);
@@ -224,6 +233,7 @@ public class MapperMethod {
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
       final String methodName = method.getName();
       final Class<?> declaringClass = method.getDeclaringClass();
+      // 从Configuration mappedStatements 中获取 MappedStatement
       MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
           configuration);
       if (ms == null) {
@@ -251,6 +261,14 @@ public class MapperMethod {
       return type;
     }
 
+    /**
+     * 解析 xml中的 sql语句，封装进 MappedStatement
+     * @param mapperInterface
+     * @param methodName
+     * @param declaringClass
+     * @param configuration
+     * @return
+     */
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
       String statementId = mapperInterface.getName() + "." + methodName;

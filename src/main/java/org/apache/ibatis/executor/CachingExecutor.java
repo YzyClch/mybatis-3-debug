@@ -39,7 +39,7 @@ import org.apache.ibatis.transaction.Transaction;
 public class CachingExecutor implements Executor {
 
   private final Executor delegate;
-  private final TransactionalCacheManager tcm = new TransactionalCacheManager();
+  private final TransactionalCacheManager tcm = new TransactionalCacheManager(); //二级缓存
 
   public CachingExecutor(Executor delegate) {
     this.delegate = delegate;
@@ -101,6 +101,7 @@ public class CachingExecutor implements Executor {
         List<E> list = (List<E>) tcm.getObject(cache, key);
         if (list == null) {
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+          // 加入二级缓存
           tcm.putObject(cache, key, list); // issue #578 and #116
         }
         return list;

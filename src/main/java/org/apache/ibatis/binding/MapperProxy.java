@@ -43,7 +43,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   private static final Method privateLookupInMethod;
   private final SqlSession sqlSession;
   private final Class<T> mapperInterface;
-  private final Map<Method, MapperMethodInvoker> methodCache;
+  private final Map<Method, MapperMethodInvoker> methodCache; //方法缓存
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethodInvoker> methodCache) {
     this.sqlSession = sqlSession;
@@ -77,6 +77,15 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     lookupConstructor = lookup;
   }
 
+
+  /**
+   * 拦截所有MapperClass的方法
+   * @param proxy
+   * @param method
+   * @param args
+   * @return
+   * @throws Throwable
+   */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
@@ -140,6 +149,15 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       this.mapperMethod = mapperMethod;
     }
 
+    /**
+     * mapper方法最终会调用到这里
+     * @param proxy
+     * @param method
+     * @param args
+     * @param sqlSession
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable {
       return mapperMethod.execute(sqlSession, args);

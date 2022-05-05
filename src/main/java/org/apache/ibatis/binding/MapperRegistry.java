@@ -27,6 +27,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ *  mapper的注册信息都存在这里
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
@@ -47,6 +48,7 @@ public class MapperRegistry {
       throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
     }
     try {
+      // 创建代理
       return mapperProxyFactory.newInstance(sqlSession);
     } catch (Exception e) {
       throw new BindingException("Error getting mapper instance. Cause: " + e, e);
