@@ -22,6 +22,9 @@ import java.util.function.Function;
 
 public class MapUtil {
   /**
+   *
+   *
+   *
    * A temporary workaround for Java 8 specific performance issue JDK-8161372 .<br>
    * This class should be removed once we drop Java 8 support.
    *
@@ -32,6 +35,7 @@ public class MapUtil {
     if (value != null) {
       return value;
     }
+    // 如果 map.get(key)为空，调用mappingFunction 的 apply方法，入参为key，生成一个value = 根据key生成value
     return map.computeIfAbsent(key, mappingFunction);
   }
 

@@ -86,6 +86,7 @@ public class LruCache implements Cache {
 
   private void cycleKeyList(Object key) {
     keyMap.put(key, key);
+    // 如果缓存数量超出size，删除最早放进去的缓存
     if (eldestKey != null) {
       delegate.removeObject(eldestKey);
       eldestKey = null;
