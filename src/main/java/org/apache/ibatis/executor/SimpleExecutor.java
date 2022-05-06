@@ -62,6 +62,7 @@ public class SimpleExecutor extends BaseExecutor {
     try {
       Configuration configuration = ms.getConfiguration();
       StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+      // sql 预处理
       stmt = prepareStatement(handler, ms.getStatementLog());
       return handler.query(stmt, resultHandler);
     } finally {
@@ -89,6 +90,7 @@ public class SimpleExecutor extends BaseExecutor {
     Connection connection = getConnection(statementLog);
     // 创建Statement对象
     stmt = handler.prepare(connection, transaction.getTimeout());
+    // 对stmt做一些操作，sql参数设置在这一步完成
     handler.parameterize(stmt);
     return stmt;
   }

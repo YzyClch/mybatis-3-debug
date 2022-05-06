@@ -36,7 +36,7 @@ public class ParameterMapping {
   private Class<?> javaType = Object.class;
   private JdbcType jdbcType;
   private Integer numericScale;
-  private TypeHandler<?> typeHandler;
+  private TypeHandler<?> typeHandler; //类型处理器
   private String resultMapId;
   private String jdbcTypeName;
   private String expression;
@@ -102,6 +102,7 @@ public class ParameterMapping {
     }
 
     public ParameterMapping build() {
+      // 解析类型处理器
       resolveTypeHandler();
       validate();
       return parameterMapping;
@@ -124,9 +125,11 @@ public class ParameterMapping {
     }
 
     private void resolveTypeHandler() {
+      // 如果没有手动配置typeHandler，就从mybatis自带的里面找
       if (parameterMapping.typeHandler == null && parameterMapping.javaType != null) {
         Configuration configuration = parameterMapping.configuration;
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        // 从类型处理器注册器中根据javaType和jdbcType匹配看看有没有合适的类型处理器
         parameterMapping.typeHandler = typeHandlerRegistry.getTypeHandler(parameterMapping.javaType, parameterMapping.jdbcType);
       }
     }

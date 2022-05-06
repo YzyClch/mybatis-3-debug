@@ -19,6 +19,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
+ * 四大对象之一<br>
  * A parameter handler sets the parameters of the {@code PreparedStatement}.
  * 用于对SQL参数的处理
  *<br/>只有一个实现类：DefaultParameterHandler
