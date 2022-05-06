@@ -26,6 +26,9 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.session.ResultHandler;
 
 /**
+ *
+ * 使用数据库的Statement（PreparedStatement）进行操作
+ *
  * @author Clinton Begin
  */
 public interface StatementHandler {
@@ -33,6 +36,11 @@ public interface StatementHandler {
   Statement prepare(Connection connection, Integer transactionTimeout)
       throws SQLException;
 
+  /**
+   * 对sql参数进行设置
+   * @param statement
+   * @throws SQLException
+   */
   void parameterize(Statement statement)
       throws SQLException;
 

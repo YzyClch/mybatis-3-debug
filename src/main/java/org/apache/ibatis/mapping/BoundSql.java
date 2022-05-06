@@ -32,11 +32,24 @@ import org.apache.ibatis.session.Configuration;
  * Can also have additional parameters that are created by the dynamic language (for loops, bind...).
  *
  * @author Clinton Begin
+ * 建立 SQL和参数的地方
  */
 public class BoundSql {
 
+  /**
+   * 我们写在标签下的 sql
+   */
   private final String sql;
+  /**
+   * SQL参数描述 列表
+   * ParameterMapping 包含属性、名称、表达式、javaType、jdbcType、typeHandler 等信息
+   */
   private final List<ParameterMapping> parameterMappings;
+  /**
+   *  SQL原始参数,比如我们传入的POJO或者Map，如果传入的是多个参数，那这就是一个Map<String,Object>对象，
+   *  如果加了@Param注解，例如 select(@Param("id")Long idKey,@Param("name")String nameKey) ->
+   *  Map<String, Object> parameterObject ## put(“id”,idKey) 、 put("name",nameKey)
+   */
   private final Object parameterObject;
   private final Map<String, Object> additionalParameters;
   private final MetaObject metaParameters;

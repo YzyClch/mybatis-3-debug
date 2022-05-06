@@ -29,6 +29,9 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ *
+ *   映射器的一个节点 <select> <update> <insert> <delete>
+ *   包括许多配置的SQL，SQL的id，缓存信息,resultMap,resultType 等
  * @author Clinton Begin
  */
 public final class MappedStatement {
@@ -40,7 +43,7 @@ public final class MappedStatement {
   private Integer timeout;
   private StatementType statementType;
   private ResultSetType resultSetType;
-  private SqlSource sqlSource;
+  private SqlSource sqlSource; //提供BoundSQL对象的地方
   private Cache cache;
   private ParameterMap parameterMap;
   private List<ResultMap> resultMaps;

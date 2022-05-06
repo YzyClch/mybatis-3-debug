@@ -16,6 +16,9 @@
 package org.apache.ibatis.session;
 
 /**
+ *
+ * 用于对 结果集（ResultSet）的封装返回处理
+ *
  * @author Clinton Begin
  */
 public interface ResultHandler<T> {
