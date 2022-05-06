@@ -33,6 +33,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 对应我们JDBC中常用的Statement接口，用于简单SQL的处理
  * @author Clinton Begin
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
