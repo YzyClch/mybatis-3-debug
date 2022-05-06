@@ -24,8 +24,11 @@ public class MapperTest {
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
     SqlSession sqlSession = sqlSessionFactory.openSession();
     UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-    int i = mapper.selectALl();
-    System.out.println(i);
+    UserMapper2 mapper2 = sqlSession.getMapper(UserMapper2.class);
+    mapper.selectALl();
+    mapper2.selectCacheTest();
+//    sqlSession.select();
+    System.out.println(sqlSession);
   }
 
 }

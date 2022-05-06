@@ -128,16 +128,18 @@ public class MapperBuilderAssistant extends BaseBuilder {
       boolean readWrite,
       boolean blocking,
       Properties props) {
-    Cache cache = new CacheBuilder(currentNamespace)
-        .implementation(valueOrDefault(typeClass, PerpetualCache.class))
-        .addDecorator(valueOrDefault(evictionClass, LruCache.class))
+    // 通过层层包装创建缓存对象
+    Cache cache = new CacheBuilder(currentNamespace) //Mapper的命名空间
+        .implementation(valueOrDefault(typeClass, PerpetualCache.class)) // 默认缓存类型
+        .addDecorator(valueOrDefault(evictionClass, LruCache.class)) //缓存回收装饰器
         .clearInterval(flushInterval)
-        .size(size)
+        .size(size) // 缓存数量
         .readWrite(readWrite)
         .blocking(blocking)
         .properties(props)
         .build();
     configuration.addCache(cache);
+    // 记录最外层的缓存引用
     currentCache = cache;
     return cache;
   }

@@ -22,6 +22,9 @@ import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
 
 /**
+ *
+ * 实际上存储二级缓存的地方？
+ *
  * @author Clinton Begin
  */
 public class PerpetualCache implements Cache {

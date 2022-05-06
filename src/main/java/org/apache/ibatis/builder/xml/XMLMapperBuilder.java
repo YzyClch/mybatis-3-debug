@@ -114,6 +114,7 @@ public class XMLMapperBuilder extends BaseBuilder {
       }
       builderAssistant.setCurrentNamespace(namespace);
       cacheRefElement(context.evalNode("cache-ref"));
+      // 解析缓存配置，构造缓存对象
       cacheElement(context.evalNode("cache"));
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
       resultMapElements(context.evalNodes("/mapper/resultMap"));
@@ -199,17 +200,23 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
   }
 
+
+  /**
+   * 解析缓存配置
+   * @param context
+   */
   private void cacheElement(XNode context) {
     if (context != null) {
       String type = context.getStringAttribute("type", "PERPETUAL");
       Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
-      String eviction = context.getStringAttribute("eviction", "LRU");
+      String eviction = context.getStringAttribute("eviction", "LRU"); //解析缓存回收策略，默认LRU
       Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
       Long flushInterval = context.getLongAttribute("flushInterval");
       Integer size = context.getIntAttribute("size");
       boolean readWrite = !context.getBooleanAttribute("readOnly", false);
       boolean blocking = context.getBooleanAttribute("blocking", false);
       Properties props = context.getChildrenAsProperties();
+      // 构造缓存对象
       builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
     }
   }

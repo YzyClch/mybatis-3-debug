@@ -91,16 +91,19 @@ public class CacheBuilder {
 
   public Cache build() {
     setDefaultImplementations();
-    Cache cache = newBaseCacheInstance(implementation, id);
+    Cache cache = newBaseCacheInstance(implementation, id); // 真实存储的缓存
     setCacheProperties(cache);
     // issue #352, do not apply decorators to custom caches
-    if (PerpetualCache.class.equals(cache.getClass())) {
-      for (Class<? extends Cache> decorator : decorators) {
+    if (PerpetualCache.class.equals(cache.getClass())) { // 如果是PerpetualCache类型缓存
+      for (Class<? extends Cache> decorator : decorators) { // 遍历包装所有装饰器缓存策略
+        // 将上一层的对象传进下一层的构造方法
         cache = newCacheDecoratorInstance(decorator, cache);
         setCacheProperties(cache);
       }
+      // 再加上一些默认的装饰器
       cache = setStandardDecorators(cache);
     } else if (!LoggingCache.class.isAssignableFrom(cache.getClass())) {
+      // 加一层日志装饰器
       cache = new LoggingCache(cache);
     }
     return cache;
@@ -122,15 +125,20 @@ public class CacheBuilder {
         metaCache.setValue("size", size);
       }
       if (clearInterval != null) {
+        // 再包一层装饰器 ScheduledCache
         cache = new ScheduledCache(cache);
         ((ScheduledCache) cache).setClearInterval(clearInterval);
       }
       if (readWrite) {
+        // 再包一层装饰器 SerializedCache
         cache = new SerializedCache(cache);
       }
+      // 再包一层装饰器 LoggingCache
       cache = new LoggingCache(cache);
+      // 再包一层装饰器 SynchronizedCache
       cache = new SynchronizedCache(cache);
       if (blocking) {
+        // 再包一层装饰器 BlockingCache
         cache = new BlockingCache(cache);
       }
       return cache;
