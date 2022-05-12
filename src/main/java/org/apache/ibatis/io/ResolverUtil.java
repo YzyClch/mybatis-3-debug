@@ -246,9 +246,10 @@ public class ResolverUtil<T> {
     String path = getPackagePath(packageName);
 
     try {
+      // 得到所有path下路径文件名
       List<String> children = VFS.getInstance().list(path);
       for (String child : children) {
-        if (child.endsWith(".class")) {
+        if (child.endsWith(".class")) { // 如果是class结尾的文件
           addIfMatching(test, child);
         }
       }

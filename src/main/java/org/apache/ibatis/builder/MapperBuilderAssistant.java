@@ -138,7 +138,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .blocking(blocking)
         .properties(props)
         .build();
-    configuration.addCache(cache);
+    configuration.addCache(cache); //调用 configuration的caches.put(cache.getId(), cache); id就是命名空间
+
     // 记录最外层的缓存引用
     currentCache = cache;
     return cache;

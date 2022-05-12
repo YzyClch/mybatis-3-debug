@@ -23,10 +23,11 @@ public class MapperTest {
     InputStream inputStream = Resources.getResourceAsStream(resource);
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
     SqlSession sqlSession = sqlSessionFactory.openSession();
-    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
-    UserMapper2 mapper2 = sqlSession.getMapper(UserMapper2.class);
-    mapper.selectALl();
-    mapper2.selectCacheTest();
+//    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+//    UserMapper2 mapper2 = sqlSession.getMapper(UserMapper2.class);
+//    mapper.selectALl();
+//    mapper2.selectCacheTest();
+    sqlSession.selectList("select  * from user");
 //    sqlSession.select();
     System.out.println(sqlSession);
   }

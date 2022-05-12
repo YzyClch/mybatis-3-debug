@@ -112,7 +112,7 @@ public class CacheBuilder {
   private void setDefaultImplementations() {
     if (implementation == null) {
       implementation = PerpetualCache.class;
-      if (decorators.isEmpty()) {
+      if (decorators.isEmpty()) { //如果装饰器列表为空，默认添加Lru策略
         decorators.add(LruCache.class);
       }
     }

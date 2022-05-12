@@ -365,9 +365,10 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      // 遍历所有孩子节点
       for (XNode child : parent.getChildren()) {
-        if ("package".equals(child.getName())) {
-          String mapperPackage = child.getStringAttribute("name");
+        if ("package".equals(child.getName())) { //如果是 package 节点
+          String mapperPackage = child.getStringAttribute("name"); //得到包名
           configuration.addMappers(mapperPackage);
         } else {
           String resource = child.getStringAttribute("resource");
