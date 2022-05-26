@@ -30,7 +30,7 @@ import org.apache.ibatis.cache.Cache;
  */
 public class SoftCache implements Cache {
   private final Deque<Object> hardLinksToAvoidGarbageCollection;
-  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;
+  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;//用于跟踪回收
   private final Cache delegate;
   private int numberOfHardLinks;
 
