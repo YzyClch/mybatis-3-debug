@@ -59,6 +59,7 @@ public class ReuseExecutor extends BaseExecutor {
   public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
     Configuration configuration = ms.getConfiguration();
     StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+    // 查看statementMap中是否有缓存，有的话就直接拿来用
     Statement stmt = prepareStatement(handler, ms.getStatementLog());
     return handler.query(stmt, resultHandler);
   }
@@ -94,6 +95,7 @@ public class ReuseExecutor extends BaseExecutor {
       // 放进statementMap  key为sql，value为 Statement
       putStatement(sql, stmt);
     }
+    // 设置sql参数
     handler.parameterize(stmt);
     return stmt;
   }
