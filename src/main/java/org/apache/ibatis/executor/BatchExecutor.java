@@ -74,6 +74,7 @@ public class BatchExecutor extends BaseExecutor {
       statementList.add(stmt);
       batchResultList.add(new BatchResult(ms, sql, parameterObject));
     }
+    // 最终调用 Statement 的 addBatch()，并不执行sql
     handler.batch(stmt);
     return BATCH_UPDATE_RETURN_VALUE;
   }
@@ -108,6 +109,12 @@ public class BatchExecutor extends BaseExecutor {
     return cursor;
   }
 
+  /**
+   * executor调用commit最终会调用这个方法
+   * @param isRollback
+   * @return
+   * @throws SQLException
+   */
   @Override
   public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
     try {
@@ -120,7 +127,8 @@ public class BatchExecutor extends BaseExecutor {
         applyTransactionTimeout(stmt);
         BatchResult batchResult = batchResultList.get(i);
         try {
-          batchResult.setUpdateCounts(stmt.executeBatch());
+          // 批处理只支持 update 和 delete
+          batchResult.setUpdateCounts(stmt.executeBatch());// 实际调用批处理的地方，也就是说在commit后才会执行sql
           MappedStatement ms = batchResult.getMappedStatement();
           List<Object> parameterObjects = batchResult.getParameterObjects();
           KeyGenerator keyGenerator = ms.getKeyGenerator();

@@ -34,6 +34,9 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ *
+ * 重用Statement的Executor
+ *
  * @author Clinton Begin
  */
 public class ReuseExecutor extends BaseExecutor {
@@ -81,12 +84,14 @@ public class ReuseExecutor extends BaseExecutor {
     Statement stmt;
     BoundSql boundSql = handler.getBoundSql();
     String sql = boundSql.getSql();
-    if (hasStatementFor(sql)) {
-      stmt = getStatement(sql);
+    if (hasStatementFor(sql)) { // 根据sql查询statementMap中是否有缓存的Statement
+      stmt = getStatement(sql); // 有就直接拿来用
       applyTransactionTimeout(stmt);
     } else {
       Connection connection = getConnection(statementLog);
+      // 否则就新建一个 Statement
       stmt = handler.prepare(connection, transaction.getTimeout());
+      // 放进statementMap  key为sql，value为 Statement
       putStatement(sql, stmt);
     }
     handler.parameterize(stmt);

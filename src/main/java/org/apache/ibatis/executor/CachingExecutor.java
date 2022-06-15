@@ -33,6 +33,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ *
+ * 二级缓存执行器
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -41,6 +43,10 @@ public class CachingExecutor implements Executor {
   private final Executor delegate;
   private final TransactionalCacheManager tcm = new TransactionalCacheManager(); //二级缓存
 
+  /**
+   * 装饰器模式，传入最终调用的执行器，在执行完二级缓存的逻辑后就会调用委托执行器执行相关代码
+   * @param delegate
+   */
   public CachingExecutor(Executor delegate) {
     this.delegate = delegate;
     delegate.setExecutorWrapper(this);
@@ -85,12 +91,14 @@ public class CachingExecutor implements Executor {
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
     BoundSql boundSql = ms.getBoundSql(parameterObject);
+    // 创建缓存key
     CacheKey key = createCacheKey(ms, parameterObject, rowBounds, boundSql);
     return query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
   }
 
   /**
    * 查询最终调用方法
+   * 如果开启了二级缓存，就查询二级缓存，如果没有二级缓存，再调用委托执行器查询实际的结果。再放进二级缓存
    * @param ms 对应的SQL信息
    * @param parameterObject
    * @param rowBounds
@@ -112,13 +120,14 @@ public class CachingExecutor implements Executor {
         // 存储过程校验
         ensureNoOutParams(ms, boundSql);
         @SuppressWarnings("unchecked")
-        List<E> list = (List<E>) tcm.getObject(cache, key);
+        List<E> list = (List<E>) tcm.getObject(cache, key); // 查询二级缓存
         if (list == null) {
+          // 调用委托执行器的query() ，委托执行器都是 BaseExecutor的子类
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
           // 加入二级缓存
           tcm.putObject(cache, key, list); // issue #578 and #116
         }
-        return list;
+        return list;// 如果二级缓存不为空，直接返回结果
       }
     }
     return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
