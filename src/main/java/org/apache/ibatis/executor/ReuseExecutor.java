@@ -87,11 +87,13 @@ public class ReuseExecutor extends BaseExecutor {
     String sql = boundSql.getSql();
     if (hasStatementFor(sql)) { // 根据sql查询statementMap中是否有缓存的Statement
       stmt = getStatement(sql); // 有就直接拿来用
+      System.out.println("从statementMap中得到了Statement 类型为："+stmt.getClass().getName());
       applyTransactionTimeout(stmt);
     } else {
       Connection connection = getConnection(statementLog);
       // 否则就新建一个 Statement
       stmt = handler.prepare(connection, transaction.getTimeout());
+      System.out.println("创建了Statement 类型为："+stmt.getClass().getName());
       // 放进statementMap  key为sql，value为 Statement
       putStatement(sql, stmt);
     }

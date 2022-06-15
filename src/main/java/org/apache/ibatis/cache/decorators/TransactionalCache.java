@@ -64,10 +64,10 @@ public class TransactionalCache implements Cache {
   @Override
   public Object getObject(Object key) {
     // issue #116
-    Object object = delegate.getObject(key);
+    Object object = delegate.getObject(key); // 查询二级缓存,看是否有值
     if (object == null) {
       // 加一层防止缓存穿透
-      entriesMissedInCache.add(key);
+      entriesMissedInCache.add(key); //用于记录未命中缓存的key
     }
     // issue #146
     if (clearOnCommit) {
@@ -79,6 +79,7 @@ public class TransactionalCache implements Cache {
 
   @Override
   public void putObject(Object key, Object object) {
+    //entriesToAddOnCommit暂存k,v ,实际在commit时才会加进二级缓存里面.
     entriesToAddOnCommit.put(key, object);
   }
 
@@ -93,6 +94,9 @@ public class TransactionalCache implements Cache {
     entriesToAddOnCommit.clear();
   }
 
+  /**
+   * 二级缓存是在commit调用时才会真正的加进缓存里.
+   */
   public void commit() {
     if (clearOnCommit) {
       delegate.clear();
@@ -113,6 +117,7 @@ public class TransactionalCache implements Cache {
   }
 
   private void flushPendingEntries() {
+    // 遍历entriesToAddOnCommit,加进二级缓存
     for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
       delegate.putObject(entry.getKey(), entry.getValue());
     }

@@ -11,4 +11,6 @@ public interface UserMapper {
 
   List<User> selectUserList(@Param("ParamAnnotationValue") QueryParam param);
 
+  Boolean updateUser(@Param("ParamAnnotationValue") QueryParam param);
+
 }

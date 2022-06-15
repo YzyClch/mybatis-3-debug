@@ -1,6 +1,8 @@
 package com.yzy.domain;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
   Integer id;
   String name;

@@ -14,4 +14,12 @@ public class QueryParam {
   public void setName(String name) {
     this.name = name;
   }
+
+  public Integer getId() {
+    return id;
+  }
+
+  public String getName() {
+    return name;
+  }
 }

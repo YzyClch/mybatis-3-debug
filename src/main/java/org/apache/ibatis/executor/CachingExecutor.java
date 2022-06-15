@@ -124,8 +124,11 @@ public class CachingExecutor implements Executor {
         if (list == null) {
           // 调用委托执行器的query() ，委托执行器都是 BaseExecutor的子类
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+          System.out.println("将结果集加入二级缓存");
           // 加入二级缓存
           tcm.putObject(cache, key, list); // issue #578 and #116
+        }else {
+          System.out.println("查询到了二级缓存");
         }
         return list;// 如果二级缓存不为空，直接返回结果
       }
