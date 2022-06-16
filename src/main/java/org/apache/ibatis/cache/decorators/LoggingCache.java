@@ -20,6 +20,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * 命中率统计
  * @author Clinton Begin
  */
 public class LoggingCache implements Cache {

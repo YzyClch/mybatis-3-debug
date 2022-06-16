@@ -22,7 +22,7 @@ import org.apache.ibatis.cache.Cache;
 
 /**
  * Lru (least recently used) cache decorator.
- *
+ * 溢出淘汰cache
  * @author Clinton Begin
  */
 public class LruCache implements Cache {

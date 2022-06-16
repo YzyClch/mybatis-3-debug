@@ -26,6 +26,9 @@ import org.apache.ibatis.util.MapUtil;
  */
 public class TransactionalCacheManager {
 
+  /**
+   * 事务暂存区 key是 二级缓存，value是二级缓存对应暂存区
+   */
   private final Map<Cache, TransactionalCache> transactionalCaches = new HashMap<>();
 
   public void clear(Cache cache) {
@@ -33,6 +36,7 @@ public class TransactionalCacheManager {
   }
 
   public Object getObject(Cache cache, CacheKey key) {
+    // getTransactionalCache(cache) 的到暂存区
     return getTransactionalCache(cache).getObject(key);
   }
 
@@ -52,6 +56,11 @@ public class TransactionalCacheManager {
     }
   }
 
+  /**
+   *
+   * @param cache 对应二级缓存
+   * @return
+   */
   private TransactionalCache getTransactionalCache(Cache cache) {
     return MapUtil.computeIfAbsent(transactionalCaches, cache, TransactionalCache::new);
   }

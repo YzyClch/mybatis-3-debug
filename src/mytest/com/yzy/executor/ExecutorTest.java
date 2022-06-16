@@ -114,8 +114,8 @@ public class ExecutorTest {
     HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
     objectObjectHashMap.put("ParamAnnotationValue",param);
     BoundSql boundSql = mappedStatement.getBoundSql(objectObjectHashMap);
-    List<Object> list = reuseExecutor.doQuery(mappedStatement, objectObjectHashMap, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, boundSql);
-    List<Object> list2 = reuseExecutor.doQuery(mappedStatement, objectObjectHashMap, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER, boundSql);
+    List<Object> list = reuseExecutor.query(mappedStatement, objectObjectHashMap, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);
+    List<Object> list2 = reuseExecutor.query(mappedStatement, objectObjectHashMap, RowBounds.DEFAULT, Executor.NO_RESULT_HANDLER);
 
   }
 

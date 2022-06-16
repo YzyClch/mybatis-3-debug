@@ -114,7 +114,7 @@ public class CachingExecutor implements Executor {
       throws SQLException {
     Cache cache = ms.getCache(); //返回层层包装的二级缓存
     if (cache != null) {
-      // 如果配置了flushCacheRequired，就删除缓存
+      // 如果配置了flushCacheRequired，就清空缓存
       flushCacheIfRequired(ms);
       if (ms.isUseCache() && resultHandler == null) { // 如果开启了缓存，才会往下走，否则直接调用 委托的query，不缓存
         // 存储过程校验

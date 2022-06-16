@@ -59,7 +59,7 @@ public abstract class BaseExecutor implements Executor {
   protected PerpetualCache localOutputParameterCache;
   protected Configuration configuration;
 
-  protected int queryStack;
+  protected int queryStack; // 记录查询次数  1表示有查询正在进行，0表示没有
   private boolean closed; //标识Executor是否关闭？
 
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
@@ -113,6 +113,7 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 每次执行更新就会清空缓存。
     clearLocalCache();
     return doUpdate(ms, parameter);
   }
@@ -144,6 +145,7 @@ public abstract class BaseExecutor implements Executor {
       throw new ExecutorException("Executor was closed.");
     }
     if (queryStack == 0 && ms.isFlushCacheRequired()) {
+      // 配置了 flushCache  清空一级缓存
       clearLocalCache();
     }
     List<E> list;
@@ -166,6 +168,7 @@ public abstract class BaseExecutor implements Executor {
       // issue #601
       deferredLoads.clear();
       if (configuration.getLocalCacheScope() == LocalCacheScope.STATEMENT) {
+        // 如果缓存作用域为 LocalCacheScope.STATEMENT 则清空一级缓存
         // issue #482
         clearLocalCache();
       }
@@ -197,12 +200,13 @@ public abstract class BaseExecutor implements Executor {
     if (closed) {
       throw new ExecutorException("Executor was closed.");
     }
+    // 下面就是缓存命中的条件
     CacheKey cacheKey = new CacheKey();
-    cacheKey.update(ms.getId());
-    cacheKey.update(rowBounds.getOffset());
-    cacheKey.update(rowBounds.getLimit());
-    cacheKey.update(boundSql.getSql());
-    List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+    cacheKey.update(ms.getId()); //id相同
+    cacheKey.update(rowBounds.getOffset()); //分页参数 起始位置
+    cacheKey.update(rowBounds.getLimit()); // 分页参数 偏移量
+    cacheKey.update(boundSql.getSql()); //必须是同一个sql
+    List<ParameterMapping> parameterMappings = boundSql.getParameterMappings(); // 参数必须相同
     TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
     // mimic DefaultParameterHandler logic
     for (ParameterMapping parameterMapping : parameterMappings) {
@@ -234,6 +238,12 @@ public abstract class BaseExecutor implements Executor {
     return localCache.getObject(key) != null;
   }
 
+
+  /**
+   * 提交清空一级缓存
+   * @param required
+   * @throws SQLException
+   */
   @Override
   public void commit(boolean required) throws SQLException {
     if (closed) {
@@ -246,6 +256,11 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
+  /**
+   * 回滚清空一级缓存
+   * @param required
+   * @throws SQLException
+   */
   @Override
   public void rollback(boolean required) throws SQLException {
     if (!closed) {
@@ -333,6 +348,7 @@ public abstract class BaseExecutor implements Executor {
    */
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
+    // 先放一个占位符？这里会导致类型转换异常把
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
@@ -343,6 +359,7 @@ public abstract class BaseExecutor implements Executor {
     localCache.putObject(key, list);
     System.out.println("将结果集加入到了一级缓存");
     if (ms.getStatementType() == StatementType.CALLABLE) {
+      // 存储过程缓存？
       localOutputParameterCache.putObject(key, parameter);
     }
     return list;
