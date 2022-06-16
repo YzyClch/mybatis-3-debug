@@ -109,8 +109,8 @@ public class ExecutorTest {
 
     MappedStatement mappedStatement = configuration.getMappedStatement("selectUserList");
     QueryParam param = new QueryParam();
-    param.setName("小");
-    param.setId(10);
+//    param.setName("小");
+//    param.setId(10);
     HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
     objectObjectHashMap.put("ParamAnnotationValue",param);
     BoundSql boundSql = mappedStatement.getBoundSql(objectObjectHashMap);

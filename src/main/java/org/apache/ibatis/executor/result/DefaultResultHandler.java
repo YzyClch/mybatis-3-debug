@@ -40,6 +40,7 @@ public class DefaultResultHandler implements ResultHandler<Object> {
 
   @Override
   public void handleResult(ResultContext<?> context) {
+    // 将结果从context中拿出来放进list
     list.add(context.getResultObject());
   }
 

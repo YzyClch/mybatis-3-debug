@@ -10,6 +10,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
@@ -84,6 +85,12 @@ public class MapperTest {
     List<User> users = mapper.selectUserList(queryParam);
     users.forEach(System.out::println);
 //    sqlSession.selectList()
+  }
+
+  @Test
+  public void testMetaObject(){
+//    MetaObject metaObject = new MetaObject();
+//    metaObject.getValue()
   }
 
   @Test

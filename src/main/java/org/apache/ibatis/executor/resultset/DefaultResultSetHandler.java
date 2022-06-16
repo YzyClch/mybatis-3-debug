@@ -186,12 +186,15 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   //
   @Override
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
+
+    // 开始处理查询结果
+
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
 
     final List<Object> multipleResults = new ArrayList<>();
 
     int resultSetCount = 0;
-    ResultSetWrapper rsw = getFirstResultSet(stmt);
+    ResultSetWrapper rsw = getFirstResultSet(stmt); //得到第一个resultSet
 
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     int resultMapCount = resultMaps.size();
@@ -327,7 +330,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   //
 
   public void handleRowValues(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
-    if (resultMap.hasNestedResultMaps()) {
+    if (resultMap.hasNestedResultMaps()) { //嵌套结果集逻辑
       ensureNoRowBounds();
       checkResultHandler();
       handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
@@ -377,7 +380,14 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     ((ResultHandler<Object>) resultHandler).handleResult(resultContext);
   }
 
+  /**
+   * 判断是否需要接着处理更多行
+   * @param context
+   * @param rowBounds
+   * @return
+   */
   private boolean shouldProcessMoreRows(ResultContext<?> context, RowBounds rowBounds) {
+    // 通过context判断是否要接着往下拉游标 && 当前context中的结果数量小于 rowBounds指定的limit
     return !context.isStopped() && context.getResultCount() < rowBounds.getLimit();
   }
 
@@ -429,6 +439,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       ancestorObjects.remove(resultMapId);
     } else {
       final ResultLoaderMap lazyLoader = new ResultLoaderMap();
+      // 创建结果对象
       rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
       if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
         final MetaObject metaObject = configuration.newMetaObject(rowValue);
@@ -967,7 +978,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   private void handleRowValuesForNestedResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping) throws SQLException {
     final DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
     ResultSet resultSet = rsw.getResultSet();
-    skipRows(resultSet, rowBounds);
+    skipRows(resultSet, rowBounds); // 根据rowBound的limit和offset跳过行
     Object rowValue = previousRowValue;
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
       final ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
@@ -979,6 +990,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
           nestedResultObjects.clear();
           storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);
         }
+        // 得到对应的JAVA对象
         rowValue = getRowValue(rsw, discriminatedResultMap, rowKey, null, partialObject);
       } else {
         rowValue = getRowValue(rsw, discriminatedResultMap, rowKey, null, partialObject);

@@ -44,6 +44,7 @@ public class DefaultResultContext<T> implements ResultContext<T> {
 
   @Override
   public boolean isStopped() {
+    // 返回停止标识
     return stopped;
   }
 
