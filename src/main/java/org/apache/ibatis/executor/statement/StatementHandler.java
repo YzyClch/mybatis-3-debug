@@ -27,6 +27,7 @@ import org.apache.ibatis.session.ResultHandler;
 
 /**
  *
+ * JDBC处理器
  * 使用数据库的Statement（PreparedStatement）进行操作
  *
  * @author Clinton Begin
@@ -37,18 +38,32 @@ public interface StatementHandler {
   Statement prepare(Connection connection, Integer transactionTimeout) throws SQLException;
 
   /**
-   * 对sql参数进行设置
+   * 预处理参数，对sql参数进行设置
    * @param statement
    * @throws SQLException
    */
   void parameterize(Statement statement)throws SQLException;
 
+  /**
+   * 调用 statement的addBatch()
+   * @param statement
+   * @throws SQLException
+   */
   void batch(Statement statement)throws SQLException;
   int update(Statement statement)throws SQLException;
   <E> List<E> query(Statement statement, ResultHandler resultHandler)throws SQLException;
   <E> Cursor<E> queryCursor(Statement statement)throws SQLException;
 
+  /**
+   * 获取动态sql
+   * @return
+   */
   BoundSql getBoundSql();
+
+  /**
+   * 获取参数处理器
+   * @return
+   */
   ParameterHandler getParameterHandler();
 
 }

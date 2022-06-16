@@ -56,7 +56,9 @@ public class ParamNameResolver {
 
   public ParamNameResolver(Configuration config, Method method) {
     this.useActualParamName = config.isUseActualParamName();
+    // 通过反射得到方法入参类型列表
     final Class<?>[] paramTypes = method.getParameterTypes();
+    // 得到入参注解列表
     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
     final SortedMap<Integer, String> map = new TreeMap<>();
     int paramCount = paramAnnotations.length;
@@ -64,20 +66,22 @@ public class ParamNameResolver {
     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
       if (isSpecialParameter(paramTypes[paramIndex])) {
         // skip special parameters
+        // 跳过类型为 RowBounds、ResultHandler 的特殊参数
         continue;
       }
       String name = null;
       for (Annotation annotation : paramAnnotations[paramIndex]) {
         if (annotation instanceof Param) {
-          hasParamAnnotation = true;
-          name = ((Param) annotation).value();
+          // 如果加了@Param 注解
+          hasParamAnnotation = true; // 标识
+          name = ((Param) annotation).value(); // 得到@Param的value ,直接返回
           break;
         }
       }
       if (name == null) {
         // @Param was not specified.
-        if (useActualParamName) {
-          name = getActualParamName(method, paramIndex);
+        if (useActualParamName) { // 如果加了@Param标识，但是没有指定value
+          name = getActualParamName(method, paramIndex); //通过反射得到参数名，直接使用参数名
         }
         if (name == null) {
           // use the parameter index as the name ("0", "1", ...)
@@ -123,18 +127,19 @@ public class ParamNameResolver {
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       return null;
-    } else if (!hasParamAnnotation && paramCount == 1) {
-      Object value = args[names.firstKey()];
+    } else if (!hasParamAnnotation && paramCount == 1) { //
+      Object value = args[names.firstKey()]; // 得到入参
       return wrapToMapIfCollection(value, useActualParamName ? names.get(0) : null);
-    } else {
+    } else { // 多个参数返回hashMap
       final Map<String, Object> param = new ParamMap<>();
       int i = 0;
       for (Map.Entry<Integer, String> entry : names.entrySet()) {
         param.put(entry.getValue(), args[entry.getKey()]);
         // add generic param names (param1, param2, ...)
-        final String genericParamName = GENERIC_NAME_PREFIX + (i + 1);
+        final String genericParamName = GENERIC_NAME_PREFIX + (i + 1); // 拼接 param+index 作为key
         // ensure not to overwrite parameter named with @Param
-        if (!names.containsValue(genericParamName)) {
+        if (!names.containsValue(genericParamName)) {  // 如果names 参数列表里没有包含这个 param+index
+          // 添加进param
           param.put(genericParamName, args[entry.getKey()]);
         }
         i++;
@@ -154,20 +159,22 @@ public class ParamNameResolver {
    */
   public static Object wrapToMapIfCollection(Object object, String actualParamName) {
     if (object instanceof Collection) {
+      // 如果入参实现了 Collection
       ParamMap<Object> map = new ParamMap<>();
       map.put("collection", object);
       if (object instanceof List) {
+        // 如果入参实现了 List
         map.put("list", object);
       }
-      Optional.ofNullable(actualParamName).ifPresent(name -> map.put(name, object));
+      Optional.ofNullable(actualParamName).ifPresent(name -> map.put(name, object)); //k参数名 v参数值
       return map;
-    } else if (object != null && object.getClass().isArray()) {
+    } else if (object != null && object.getClass().isArray()) { //如果是数组
       ParamMap<Object> map = new ParamMap<>();
       map.put("array", object);
       Optional.ofNullable(actualParamName).ifPresent(name -> map.put(name, object));
       return map;
     }
-    return object;
+    return object; // 如果既不是集合也不是数组，返回原对象，否则就会包装成一个map
   }
 
 }

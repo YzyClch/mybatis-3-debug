@@ -22,6 +22,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -85,4 +86,14 @@ public class MapperTest {
 //    sqlSession.selectList()
   }
 
+  @Test
+  public void testMapper() throws IOException {
+    String resource = "com/yzy/config/mybatis-config.xml";
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    List<User> list = mapper.selectUser2(new ArrayList<>());
+    System.out.println(list);
+  }
 }

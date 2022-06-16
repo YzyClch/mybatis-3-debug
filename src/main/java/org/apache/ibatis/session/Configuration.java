@@ -700,8 +700,9 @@ public class Configuration {
    * @return
    */
   public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+    // 这里其实过度设计了，完全可以直接把new StatementHandler() 的逻辑直接写到这,没必要搞个 RoutingStatementHandler
     StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler); // 应用插件
     return statementHandler;
   }
 
