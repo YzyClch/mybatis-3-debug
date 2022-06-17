@@ -29,7 +29,7 @@ public class LruCache implements Cache {
 
   private final Cache delegate;
   private Map<Object, Object> keyMap;
-  private Object eldestKey;
+  private Object eldestKey; // 最老的key
 
   public LruCache(Cache delegate) {
     this.delegate = delegate;
@@ -50,10 +50,16 @@ public class LruCache implements Cache {
     keyMap = new LinkedHashMap<Object, Object>(size, .75F, true) {
       private static final long serialVersionUID = 4267176411845948333L;
 
+      /**
+       * 判断是否要删除最早放进去的节点
+       * @param eldest
+       * @return
+       */
       @Override
       protected boolean removeEldestEntry(Map.Entry<Object, Object> eldest) {
         boolean tooBig = size() > size;
-        if (tooBig) {
+        if (tooBig) { // 如果linkedHashMap的容量 > 设置的缓存容量 需要删除头节点
+          // 标记最老的需要删除的key
           eldestKey = eldest.getKey();
         }
         return tooBig;
@@ -69,6 +75,7 @@ public class LruCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
+    // 会调用LinkedHashMap afterNodeAccess 方法，把get过的元素放到尾部
     keyMap.get(key); // touch
     return delegate.getObject(key);
   }
@@ -88,6 +95,7 @@ public class LruCache implements Cache {
     keyMap.put(key, key);
     // 如果缓存数量超出size，删除最早放进去的缓存
     if (eldestKey != null) {
+      // eldestKey 不为空就删除这个Cache
       delegate.removeObject(eldestKey);
       eldestKey = null;
     }

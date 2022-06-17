@@ -33,6 +33,8 @@ import org.apache.ibatis.cache.CacheException;
  *
  * @author Eduardo Macarron
  *
+ * 阻塞缓存：如果缓存key没有被put过，那get这个key的时候就会一直阻塞，直到有线程put了这个key
+ *
  */
 public class BlockingCache implements Cache {
 
@@ -60,10 +62,19 @@ public class BlockingCache implements Cache {
     try {
       delegate.putObject(key, value);
     } finally {
+      // 最终从concurrentHashMap中取出key对应的CountDownLatch，执行 countDown()
       releaseLock(key);
     }
   }
 
+  /**
+   * get的时候会先获得key对应的 CountDownLatch
+   * 之后等待latch countDown()
+   * 等待不到就一直阻塞，成功后返回缓存结果
+   * @param key
+   *          The key
+   * @return
+   */
   @Override
   public Object getObject(Object key) {
     acquireLock(key);
@@ -96,7 +107,7 @@ public class BlockingCache implements Cache {
       try {
         if (timeout > 0) {
           boolean acquired = latch.await(timeout, TimeUnit.MILLISECONDS);
-          if (!acquired) {
+          if (!acquired) { //超时未取得，抛异常
             throw new CacheException(
                 "Couldn't get a lock in " + timeout + " for the key " + key + " at the cache " + delegate.getId());
           }

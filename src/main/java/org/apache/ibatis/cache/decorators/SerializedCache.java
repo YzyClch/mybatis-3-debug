@@ -30,6 +30,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.SerialFilterChecker;
 
 /**
+ * SerializedCache : 只有实现了SerializedCache接口的value才能put
  * @author Clinton Begin
  */
 public class SerializedCache implements Cache {
@@ -49,6 +50,7 @@ public class SerializedCache implements Cache {
   public int getSize() {
     return delegate.getSize();
   }
+
 
   @Override
   public void putObject(Object key, Object object) {

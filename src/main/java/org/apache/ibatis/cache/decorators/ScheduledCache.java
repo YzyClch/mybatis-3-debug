@@ -20,7 +20,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.ibatis.cache.Cache;
 
 /**
- * 过期清理
+ * 定时清除Cache
+ * Cache 设置了 flushInterval,就会采用这个包装类
  * @author Clinton Begin
  */
 public class ScheduledCache implements Cache {
@@ -31,7 +32,9 @@ public class ScheduledCache implements Cache {
 
   public ScheduledCache(Cache delegate) {
     this.delegate = delegate;
+    // 清理间隔
     this.clearInterval = TimeUnit.HOURS.toMillis(1);
+    // 最后一次清理的时间
     this.lastClear = System.currentTimeMillis();
   }
 
@@ -70,6 +73,7 @@ public class ScheduledCache implements Cache {
   @Override
   public void clear() {
     lastClear = System.currentTimeMillis();
+    // 清空缓存
     delegate.clear();
   }
 
@@ -84,6 +88,7 @@ public class ScheduledCache implements Cache {
   }
 
   private boolean clearWhenStale() {
+    // 当前时间 - 上一次清理的时间 > 设置的清理时间间隔
     if (System.currentTimeMillis() - lastClear > clearInterval) {
       clear();
       return true;

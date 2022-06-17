@@ -30,7 +30,7 @@ import org.apache.ibatis.cache.Cache;
  */
 public class SoftCache implements Cache {
   private final Deque<Object> hardLinksToAvoidGarbageCollection;
-  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;//用于跟踪回收
+  private final ReferenceQueue<Object> queueOfGarbageCollectedEntries;//用于跟踪回收,value被回收后，SoftEntry的引用会被放进这个队列
   private final Cache delegate;
   private int numberOfHardLinks;
 
@@ -59,6 +59,9 @@ public class SoftCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     removeGarbageCollectedItems();
+    /**
+     *  当对象被回收时， 会把被回收的对象放进 queueOfGarbageCollectedEntries
+     */
     delegate.putObject(key, new SoftEntry(key, value, queueOfGarbageCollectedEntries));
   }
 
@@ -70,7 +73,7 @@ public class SoftCache implements Cache {
     if (softReference != null) {
       result = softReference.get();
       if (result == null) {
-        delegate.removeObject(key);
+        delegate.removeObject(key); // 如果值已经被虚拟机回收了，删除这个缓存
       } else {
         // See #586 (and #335) modifications need more than a read lock
         synchronized (hardLinksToAvoidGarbageCollection) {
@@ -103,6 +106,9 @@ public class SoftCache implements Cache {
 
   private void removeGarbageCollectedItems() {
     SoftEntry sv;
+    /**
+     * 查看回收队列中是否有元素，有的话删除对应的缓存key
+     */
     while ((sv = (SoftEntry) queueOfGarbageCollectedEntries.poll()) != null) {
       delegate.removeObject(sv.key);
     }

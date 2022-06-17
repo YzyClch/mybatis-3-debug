@@ -58,8 +58,6 @@ public class CacheTest {
   @Test
   public void cacheTest(){
     TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
-
-
     Cache cache=configuration.getCache("com.yzy.mapper.UserMapper");
     cache.putObject("test","value");
     Object test = cache.getObject("test");

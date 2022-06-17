@@ -32,7 +32,7 @@ public class LoggingCache implements Cache {
 
   public LoggingCache(Cache delegate) {
     this.delegate = delegate;
-    this.log = LogFactory.getLog(getId());
+    this.log = LogFactory.getLog(getId()); // 用于打印日志
   }
 
   @Override
@@ -52,12 +52,12 @@ public class LoggingCache implements Cache {
 
   @Override
   public Object getObject(Object key) {
-    requests++;
+    requests++; // 缓存查询次数
     final Object value = delegate.getObject(key);
     if (value != null) {
-      hits++;
+      hits++; // 缓存命中次数
     }
-    if (log.isDebugEnabled()) {
+    if (log.isDebugEnabled()) { // 打印日志
       log.debug("Cache Hit Ratio [" + getId() + "]: " + getHitRatio());
     }
     return value;
