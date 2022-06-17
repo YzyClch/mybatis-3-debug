@@ -8,6 +8,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
+import org.apache.ibatis.type.TypeAliasRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -39,16 +40,26 @@ public class CacheTest {
   public void init() throws IOException {
     String resource = "com/yzy/config/mybatis-config.xml";
     InputStream inputStream = Resources.getResourceAsStream(resource);
-    configuration = new XMLConfigBuilder(inputStream).parse();
-    environment = configuration.getEnvironment();
+    XMLConfigBuilder xmlConfigBuilder = new XMLConfigBuilder(inputStream);
+    Configuration configuration = xmlConfigBuilder.getConfiguration();
+    TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+//    typeAliasRegistry.registerAlias("MY",MyCache.class);
+    CacheTest.configuration =xmlConfigBuilder .parse();
+    environment = CacheTest.configuration.getEnvironment();
 
     final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
     // 调用事务工厂创建Transaction对象
     tx = transactionFactory.newTransaction(environment.getDataSource(), null, true);
   }
 
+
+
+
   @Test
   public void cacheTest(){
+    TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+
+
     Cache cache=configuration.getCache("com.yzy.mapper.UserMapper");
     cache.putObject("test","value");
     Object test = cache.getObject("test");

@@ -2,8 +2,11 @@ package com.yzy.mapper;
 
 import com.yzy.domain.User;
 import com.yzy.param.QueryParam;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.type.Alias;
+import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 
 import java.util.List;
 

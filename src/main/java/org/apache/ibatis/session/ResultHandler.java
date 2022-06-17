@@ -23,6 +23,10 @@ package org.apache.ibatis.session;
  */
 public interface ResultHandler<T> {
 
+  /**
+   * 对resultContext中的   resultObject 进行处理
+   * @param resultContext
+   */
   void handleResult(ResultContext<? extends T> resultContext);
 
 }

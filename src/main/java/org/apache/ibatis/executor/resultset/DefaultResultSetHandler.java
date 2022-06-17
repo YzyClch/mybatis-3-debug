@@ -361,7 +361,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     skipRows(resultSet, rowBounds);
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
       ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
-      Object rowValue = getRowValue(rsw, discriminatedResultMap, null);
+      Object rowValue = getRowValue(rsw, discriminatedResultMap, null); //得到一行的值，转化为对应的java对象
       storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);
     }
   }
@@ -376,7 +376,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   @SuppressWarnings("unchecked" /* because ResultHandler<?> is always ResultHandler<Object>*/)
   private void callResultHandler(ResultHandler<?> resultHandler, DefaultResultContext<Object> resultContext, Object rowValue) {
-    resultContext.nextResultObject(rowValue);
+    resultContext.nextResultObject(rowValue); // 将resultContext中的当前处理对象换成 rowValue
     ((ResultHandler<Object>) resultHandler).handleResult(resultContext);
   }
 
@@ -411,7 +411,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
     final ResultLoaderMap lazyLoader = new ResultLoaderMap();
-    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+    Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix); // 创建一个属性为空的待填充对象
     if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final MetaObject metaObject = configuration.newMetaObject(rowValue);
       boolean foundValues = this.useConstructorMappings;
@@ -1222,7 +1222,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     if (rsw.getColumnNames().size() == 1) {
       return typeHandlerRegistry.hasTypeHandler(resultType, rsw.getJdbcType(rsw.getColumnNames().get(0)));
     }
-    return typeHandlerRegistry.hasTypeHandler(resultType);
+    return typeHandlerRegistry.hasTypeHandler(resultType); // 校验有没有对应的类型处理器
   }
 
 }

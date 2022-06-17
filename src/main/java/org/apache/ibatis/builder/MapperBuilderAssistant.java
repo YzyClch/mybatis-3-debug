@@ -131,9 +131,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
     // 通过层层包装创建缓存对象
     Cache cache = new CacheBuilder(currentNamespace) //Mapper的命名空间
         .implementation(valueOrDefault(typeClass, PerpetualCache.class)) // 默认缓存类型
-        .addDecorator(valueOrDefault(evictionClass, LruCache.class)) //缓存回收装饰器
+        .addDecorator(valueOrDefault(evictionClass, LruCache.class)) // 回收策略装饰器 默认LRU
         .clearInterval(flushInterval)
-        .size(size) // 缓存数量
+        .size(size) // 缓存容量
         .readWrite(readWrite)
         .blocking(blocking)
         .properties(props)

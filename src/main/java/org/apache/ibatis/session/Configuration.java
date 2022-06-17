@@ -193,11 +193,15 @@ public class Configuration {
     typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
     typeAliasRegistry.registerAlias("UNPOOLED", UnpooledDataSourceFactory.class);
 
-    typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
-    typeAliasRegistry.registerAlias("FIFO", FifoCache.class);
-    typeAliasRegistry.registerAlias("LRU", LruCache.class);
-    typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
-    typeAliasRegistry.registerAlias("WEAK", WeakCache.class);
+
+    /**
+     * 对应四种回收策略
+     */
+    typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);  //无
+    typeAliasRegistry.registerAlias("FIFO", FifoCache.class); // 先进先出
+    typeAliasRegistry.registerAlias("LRU", LruCache.class); //默认回收策略
+    typeAliasRegistry.registerAlias("SOFT", SoftCache.class); // 软引用回收
+    typeAliasRegistry.registerAlias("WEAK", WeakCache.class); // 弱引用回收
 
     typeAliasRegistry.registerAlias("DB_VENDOR", VendorDatabaseIdProvider.class);
 
