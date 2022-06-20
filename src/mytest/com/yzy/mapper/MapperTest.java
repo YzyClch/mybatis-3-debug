@@ -78,6 +78,7 @@ public class MapperTest {
     InputStream inputStream = Resources.getResourceAsStream(resource);
     SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
     SqlSession sqlSession = sqlSessionFactory.openSession();
+//    sqlSession.selectList()
     UserMapper mapper = sqlSession.getMapper(UserMapper.class);
     QueryParam queryParam = new QueryParam();
     queryParam.setId(null);
