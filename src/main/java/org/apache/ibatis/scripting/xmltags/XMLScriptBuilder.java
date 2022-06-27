@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
  */
 public class XMLScriptBuilder extends BaseBuilder {
 
-  private final XNode context;
+  private final XNode context; //对应<select>这种节点
   private boolean isDynamic;
   private final Class<?> parameterType;
   private final Map<String, NodeHandler> nodeHandlerMap = new HashMap<>();
@@ -66,7 +66,7 @@ public class XMLScriptBuilder extends BaseBuilder {
   public SqlSource parseScriptNode() {
     MixedSqlNode rootSqlNode = parseDynamicTags(context);
     SqlSource sqlSource;
-    if (isDynamic) {
+    if (isDynamic) { //是否包含了动态标签
       sqlSource = new DynamicSqlSource(configuration, rootSqlNode);
     } else {
       sqlSource = new RawSqlSource(configuration, rootSqlNode, parameterType);
@@ -84,7 +84,7 @@ public class XMLScriptBuilder extends BaseBuilder {
         TextSqlNode textSqlNode = new TextSqlNode(data);
         if (textSqlNode.isDynamic()) {
           contents.add(textSqlNode);
-          isDynamic = true;
+          isDynamic = true; //这是动态文本
         } else {
           contents.add(new StaticTextSqlNode(data));
         }

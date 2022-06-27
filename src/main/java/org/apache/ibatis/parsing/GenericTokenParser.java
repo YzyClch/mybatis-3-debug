@@ -15,10 +15,18 @@
  */
 package org.apache.ibatis.parsing;
 
+
+
 /**
  * @author Clinton Begin
  */
 public class GenericTokenParser {
+
+
+  public static void main(String[] args) {
+    System.out.println(new GenericTokenParser("#{", "}", content -> "?")
+      .parse("select * from user where id like #{xxx} and name like #{adslkdj.asdasd}"));
+  }
 
   private final String openToken;
   private final String closeToken;

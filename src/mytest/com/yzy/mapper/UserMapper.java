@@ -2,6 +2,7 @@ package com.yzy.mapper;
 
 import com.yzy.domain.User;
 import com.yzy.param.QueryParam;
+import com.yzy.plugin.Page;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -21,4 +22,11 @@ public interface UserMapper {
 
   @Select("select * from user")
   List<User> selectUser2(List<Integer>listParam);
+
+
+  List<User> findUserListByParam(@Param("id")Integer id,@Param("name") String name);
+
+
+  @Select("select * from user where id =#{id} and name =#{name } ")
+  Page<User> pageTest(Page page,@Param("id")Integer id,@Param("name") String name);
 }

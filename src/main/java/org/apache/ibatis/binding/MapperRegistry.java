@@ -27,7 +27,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- *  mapper的注册信息都存在这里
+ *  mapper的注册信息都存在这里,用于创建Mapper代理
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss

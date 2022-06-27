@@ -41,8 +41,14 @@ public class SqlSourceBuilder extends BaseBuilder {
   }
 
   public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
+
+    // 这里会将#{} 替换成 ?
+
     ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
     GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
+
+
+
     String sql;
     if (configuration.isShrinkWhitespacesInSql()) {
       sql = parser.parse(removeExtraWhitespaces(originalSql));
@@ -85,7 +91,7 @@ public class SqlSourceBuilder extends BaseBuilder {
     @Override
     public String handleToken(String content) {
       parameterMappings.add(buildParameterMapping(content));
-      return "?";
+      return "?"; // 先将#{} 替换为？ 就在这步
     }
 
     private ParameterMapping buildParameterMapping(String content) {

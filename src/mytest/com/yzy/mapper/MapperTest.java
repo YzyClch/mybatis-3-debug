@@ -3,6 +3,7 @@ package com.yzy.mapper;
 import com.mysql.cj.jdbc.Driver;
 import com.yzy.domain.User;
 import com.yzy.param.QueryParam;
+import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.SimpleExecutor;
@@ -104,4 +105,33 @@ public class MapperTest {
     List<User> list = mapper.selectUser2(new ArrayList<>());
     System.out.println(list);
   }
+
+
+  @Test
+  public void mapperTest() throws IOException {
+    String resource = "com/yzy/config/mybatis-config.xml";
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    MapperRegistry mapperRegistry=new MapperRegistry(configuration);
+    mapperRegistry.addMapper(UserMapper.class);
+    UserMapper mapper = mapperRegistry.getMapper(UserMapper.class, sqlSession);
+    System.out.println(mapper);
+  }
+
+
+  @Test
+  public void mapperTest2() throws IOException {
+    String resource = "com/yzy/config/mybatis-config.xml";
+    InputStream inputStream = Resources.getResourceAsStream(resource);
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+    SqlSession sqlSession = sqlSessionFactory.openSession();
+    MapperRegistry mapperRegistry=new MapperRegistry(configuration);
+    mapperRegistry.addMapper(UserMapper.class);
+    UserMapper mapper = mapperRegistry.getMapper(UserMapper.class, sqlSession);
+    mapper.findUserListByParam(1,"test");
+  }
+
+
+
 }

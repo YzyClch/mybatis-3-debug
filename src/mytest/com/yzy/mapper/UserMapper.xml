@@ -15,8 +15,21 @@
     </where>
 
   </select>
+    <select id="findUserListByParam" resultType="com.yzy.domain.User">
+        select id,name from user
+      <where>
+        <if test="id != null">
+          user.id =id
+        </if>
+        <if test="name != null and name !=''">
+          and user.name like concat('%',#{name},'%')
+        </if>
+      </where>
 
-  <update id="updateUser">
+
+    </select>
+
+    <update id="updateUser">
     update user set name = #{ParamAnnotationValue.name} where id = #{ParamAnnotationValue.id}
   </update>
 </mapper>
