@@ -156,6 +156,8 @@ public class Configuration {
 
   /**
    * 所有的mapper都被存放在这个map里面
+   *
+   * key 为sql
    */
   protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
       .conflictMessageProducer((savedValue, targetValue) ->
